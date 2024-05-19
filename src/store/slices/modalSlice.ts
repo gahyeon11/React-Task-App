@@ -1,7 +1,12 @@
-import {createSlice} from "@reduxjs/toolkit";
+import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 import { ITask } from "../../types";
 
 type TModalState = {
+    boardId : string,
+    listId : string,
+    task : ITask
+}
+type TSetModalDataAction = {
     boardId : string,
     listId : string,
     task : ITask
@@ -21,8 +26,13 @@ const modalSlice = createSlice({
     name : 'madal',
     initialState : initialState, //초기state 설정
     reducers : {
-
+        setModalDate: (state, {payload}: PayloadAction<TSetModalDataAction>)=>{
+            state.boardId = payload.boardId;
+            state.listId = payload.listId;
+            state.task = payload.task;
+        }
     }
 })
 
+export const {setModalDate} = modalSlice.actions;
 export const modalReducer = modalSlice.reducer;
