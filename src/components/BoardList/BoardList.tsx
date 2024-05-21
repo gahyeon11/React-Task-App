@@ -1,5 +1,5 @@
 import React, { useState, FC } from "react";
-import { useTypedSelector } from "../../hooks/redux";
+import { useTypedDispatch, useTypedSelector } from "../../hooks/redux";
 import SideForm from "./SideForm/SideForm";
 import { FiPlusCircle } from "react-icons/fi";
 import {
@@ -12,6 +12,18 @@ import {
 } from "./BoardList.css";
 import clsx from "clsx";
 import { useRef } from "react";
+import { GoSignOut } from "react-icons/go";
+import { FiLogIn } from "react-icons/fi";
+import {
+  GoogleAuthProvider,
+  getAuth,
+  signInAnonymously,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
+import { app } from "../../firebase";
+import { removeUserState, setUser } from "../../store/slices/userSlice";
+import { useAuth } from "../../hooks/useAuth";
 
 type TBoardListProps = {
   activeBoardId: string;
@@ -21,9 +33,40 @@ const BoardList: FC<TBoardListProps> = ({
   acticeBoardId,
   setActiveBoardId,
 }) => {
+  const dispatch = useTypedDispatch();
   const { boardArray } = useTypedSelector((state) => state.boards);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const { isAuth } = useAuth();
+
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  const handleLogIn = () => {
+    signInWithPopup(auth, provider)
+      .then((userCredential) => {
+        console.log(userCredential);
+        dispatch(
+          setUser({
+            email: userCredential.user.email,
+            id: userCredential.user.uid,
+          })
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const handleSignOut = ()=>{
+    signOut(auth)
+    .then(()=>{
+      dispatch(removeUserState())
+    })
+    .catch((error)=>{
+      console.log(error);
+    })
+  }
 
   const handleClick = () => {
     setIsFormOpen(!isFormOpen);
@@ -57,6 +100,11 @@ const BoardList: FC<TBoardListProps> = ({
           <SideForm inputRef={inputRef} setIsFormOpen={setIsFormOpen} />
         ) : (
           <FiPlusCircle className={addbutton} onClick={handleClick} />
+        )}
+        {isAuth ? (
+          <GoSignOut className={addbutton} onClick={handleSignOut}/>
+        ) : (
+          <FiLogIn className={addbutton} onClick={handleLogIn} />
         )}
       </div>
     </div>

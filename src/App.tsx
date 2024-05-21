@@ -6,9 +6,11 @@ import ListsContainer from "./components/ListContainer/ListsContainer";
 import { useTypedDispatch, useTypedSelector } from "./hooks/redux";
 import EditModal from "./components/EditModal/EditModal";
 import LoggerModal from "./components/LoggerModal/LoggerModal";
-import { deleteBoard } from "./store/slices/boardsSlice";
+import { deleteBoard, sort } from "./store/slices/boardsSlice";
 import { v4 } from "uuid";
 import { addLog } from "./store/slices/loggerSlice";
+import { DragDropContext } from "react-beautiful-dnd";
+//import {} from "react-beautiful-dnd";
 
 function App() {
   const dispatch = useTypedDispatch();
@@ -47,6 +49,34 @@ function App() {
       alert("최소 1개 이상의 게시판이 있어야 합니다.")
     }
   }
+  const handleDragEnd = (result: any) => {
+    console.log(result);
+    const {destination, source, draggableId} = result; 
+    console.log(lists);
+    const sourceList = lists.filter(
+      list => list.listId === source.droppableId
+    )[0]
+
+    console.log(sourceList);
+
+    dispatch(
+      sort({
+        boardIndex: boards.findIndex(board=> board.boardId === activeBoardId),
+        droppableIdStart: source.droppableId,
+        droppableIdEnd: destination.droppableId,
+        droppablwIndexStart: source.index,
+        droppableIndexEnd: destination.index,
+        draggableId: draggableId
+      })
+    )
+
+    dispatch(addLog({
+      logId: v4(),
+      logMessage: `리스트를 ${sourceList.listName}에서 ${lists.filter(list => list.listId === destination.droppableId)[0].listName}으로 ${sourceList.tasks.filter(task => task.taskId === draggableId)[0].taskName}을 이동하기 `,
+      logAuthor:"User",
+      logTimestamp:String(Date.now())
+    }))
+  };
   return (
     <div className={appContainer}>
       {isLoggerOpen ? <LoggerModal setIsLoggerOpen={setIsLoggerOpen}/> : null}
@@ -57,7 +87,9 @@ function App() {
         setActiveBoardId={setActiveBoardId}
       />
       <div className={board}>
+        <DragDropContext onDragEnd={handleDragEnd}>
         <ListsContainer lists={lists} boardId={getActiveBoard.boardId} />
+      </DragDropContext>
       </div>
       <div className={buttons}>
         <button className={deleteBoardButton} onClick={handleDeleteBoard}>이 게시판 삭제하기</button>
