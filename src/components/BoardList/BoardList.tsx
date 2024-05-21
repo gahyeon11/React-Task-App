@@ -17,7 +17,8 @@ import { FiLogIn } from "react-icons/fi";
 import {
   GoogleAuthProvider,
   getAuth,
-  signInAnonymously,
+  //signInAnonymously,
+  // eslint-disable-line no-unused-vars
   signInWithPopup,
   signOut,
 } from "firebase/auth";
@@ -30,7 +31,7 @@ type TBoardListProps = {
   setActiveBoardId: React.Dispatch<React.SetStateAction<string>>;
 };
 const BoardList: FC<TBoardListProps> = ({
-  acticeBoardId,
+  activeBoardId,
   setActiveBoardId,
 }) => {
   const dispatch = useTypedDispatch();
@@ -82,12 +83,12 @@ const BoardList: FC<TBoardListProps> = ({
           className={clsx(
             {
               [boardItemActive]:
-                boardArray.findIndex((b) => b.boardId === acticeBoardId) ===
+                boardArray.findIndex((b) => b.boardId === activeBoardId) ===
                 index,
             },
             {
               [boardItem]:
-                boardArray.findIndex((b) => b.boardId === acticeBoardId) !==
+                boardArray.findIndex((b) => b.boardId === activeBoardId) !==
                 index,
             }
           )}

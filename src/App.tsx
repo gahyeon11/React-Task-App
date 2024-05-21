@@ -12,6 +12,7 @@ import { addLog } from "./store/slices/loggerSlice";
 import { DragDropContext } from "react-beautiful-dnd";
 //import {} from "react-beautiful-dnd";
 
+
 function App() {
   const dispatch = useTypedDispatch();
   const [isLoggerOpen, setIsLoggerOpen] = useState(false);
@@ -49,6 +50,7 @@ function App() {
       alert("최소 1개 이상의 게시판이 있어야 합니다.")
     }
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDragEnd = (result: any) => {
     console.log(result);
     const {destination, source, draggableId} = result; 

@@ -4,7 +4,8 @@ import { useTypedDispatch, useTypedSelector } from '../../hooks/redux'
 import { deleteTask, setModalActive, updateTask } from '../../store/slices/boardsSlice';
 import { addLog } from '../../store/slices/loggerSlice';
 import { v4 } from 'uuid';
-import { buttons, closeButton, deleteButton, header, input, modalWindow, title, updateButton, wrapper } from './EditModal.css';
+import { buttons, closeButton, deleteButton, //header, 
+input, modalWindow, title, updateButton, wrapper } from './EditModal.css';
 
 const EditModal = () => {
   const dispatch = useTypedDispatch();
